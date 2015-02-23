@@ -9,8 +9,8 @@ body,
 #textarea {
   height: 100%;
 }
-body {
-  display: none; /* until page loads */
+.loading {
+  display: none;
 }
 #textarea {
   padding: 1% 15% 0;
@@ -38,8 +38,10 @@ body {
 }
 @media print {
   #textarea {
-    padding: 0;
+    padding: 0 !important;
     height: 100% !important;
+    background: transparent !important;
+    color: #000 !important;
   }
   #status-bar { display: none; }
 }

@@ -1,11 +1,15 @@
 /*!
- * Notepad5 v1.01
- * By Uddhab Haldar (https://twitter.com/uddhabh)
- * See the LICENSE file (MIT).
+ * Notepad5 v1.06
+ * https://github.com/uddhabh/Notepad5
+ * By Uddhab Haldar (http://uddhab.me.pn/)
  */
 
 (function() {
   "use strict";
+
+  function $(id) { // shortcut for document.getElementById
+    return document.getElementById(id);
+  }
 
   // core variables
   var customStyle = $("custom-style"),
@@ -16,11 +20,7 @@
     isModified,
     filename;
 
-  function $(id) { // shortcut for document.getElementById
-    return document.getElementById(id);
-  }
-
-  function skipSave() { // warning for saving doc
+  function skipSaving() { // warning for saving doc
     if (!isModified || !textarea.value || confirm("You have unsaved changes that will be lost.")) {
       isModified = false;
       return true;
@@ -32,14 +32,14 @@
     document.title = filename + " - " + appname;
   }
 
-  function updateStatusBar() { // format: words characters(no spaces/with spaces)
+  function updateStatusBar() { // text stats
     var text = textarea.value;
-    statusBar.value = "Words: " + (text.replace(/['";:,.?¿\-!¡]+/g, "").split(/\w+/).length - 1) +
+    statusBar.value = "Words: " + (text.split(/\w+/).length - 1) +
       "  Characters: " + text.replace(/\s/g, "").length + " / " + text.length;
   }
 
   function newDoc(text, newFilename) {
-    if (skipSave()) {
+    if (skipSaving()) {
       textarea.value = text || "";
       changeFilename(newFilename); // default "untitled.txt"
       updateStatusBar();
@@ -76,32 +76,18 @@
   }
 
   function showHideStatusBar(on) {
-    statusBar.hidden = !on; // using hidden attribute
+    statusBar.hidden = !on; // true/false
     textarea.className = on ? "statusBarOn" : "";
   }
 
-  function toggleFullScreen() { // https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Using_full_screen_mode
-    if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-      var elem = document.documentElement;
-      if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-      } else if (elem.msRequestFullscreen) {
-        elem.msRequestFullscreen();
-      } else if (elem.mozRequestFullScreen) {
-        elem.mozRequestFullScreen();
-      } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-      }
+  function toggleFullScreen() {
+    var elem = document.documentElement,
+      request = elem.requestFullscreen || elem.msRequestFullscreen || elem.mozRequestFullScreen || elem.webkitRequestFullscreen,
+      exit = document.exitFullscreen || document.msExitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen;
+    if (!document.fullscreenElement && !document.msFullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement) {
+      request.call(elem);
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      }
+      exit.call(document);
     }
   }
 
@@ -124,43 +110,40 @@
   }
 
   function init() {
-    document.body.style.display = "block";
+    document.body.className = ""; // make the app visible
     if (navigator.userAgent.match(/Mobi/)) { // likely mobile
-      document.body.innerHTML = "Sorry this app doesn't work on mobile browsers :(";
-      return;
+      document.body.innerHTML = "I think this webapp isn't useful on mobile... sorry :(";
+      return; // end
     }
     if (!window.File) { // likely unsupported browser
       document.body.innerHTML = "<p>Sorry your browser isn't supported :(<br>Please upgrade to <a href='http://google.com/chrome'>Google Chrome</a>.</p>";
-      return; // dont proceed
+      return; // end
     }
     var appdata = JSON.parse(localStorage.getItem("appdata"));
+    showHideStatusBar(!appdata || appdata.statusBarOn); // show by default
     if (appdata) {
+      if (appdata.customCSS) {
+        addCSS(appdata.customCSS);
+      }
       if (appdata.isModified) {
         newDoc(appdata.text, appdata.filename);
         isModified = true;
       } else {
         newDoc(); // blank note
       }
-      if (appdata.customCSS) {
-        addCSS(appdata.customCSS);
-      }
     } else { // first run
-      var welcomeText =
-        ["Welcome to " + appname + ", the online-offline notepad. All of your text is stored offline on your computer. Nothing is stored on servers.\n",
-          "Here are some useful keyboard shortcuts for using " + appname + ":",
-          "Ctrl + R : Create New Document",
-          "Ctrl + O : Open Document",
-          "Ctrl + S : Save Document",
-          "Ctrl + B : Toggle Status Bar",
-          "Ctrl + E : Add Custom CSS",
-          "Tab      : Insert Tab",
-          "Ctrl + Enter : Toggle Full Screen",
-          "\nHappy Writing!",
-          "- Uddhab Haldar (twitter.com/uddhabh)"
-        ].join("\n");
-      newDoc(welcomeText, "Welcome!");
+      newDoc(["Welcome to " + appname + ", the online-offline notepad. All of your text is stored offline on your computer. Nothing is stored on servers.",
+        "\nHere are some useful keyboard shortcuts:",
+        "Ctrl + R : Create New Document",
+        "Ctrl + O : Open Document",
+        "Ctrl + S : Save Document",
+        "Ctrl + B : Toggle Status Bar",
+        "Ctrl + E : Add Custom CSS",
+        "Ctrl + Enter : Toggle Full Screen",
+        "\nYou can contact me at:",
+        "uddhab.me@gmail.com or twitter.com/uddhabh"
+      ].join("\n"), "Welcome!");
     }
-    showHideStatusBar(!appdata || appdata.statusBarOn); // show by default
   }
 
   fileInput.addEventListener("change", openDoc);
@@ -192,7 +175,7 @@
       },
       69: addCSS, // E: add custom CSS
       79: function() { // O: open
-        if (skipSave()) fileInput.click();
+        if (skipSaving()) fileInput.click();
       },
       82: newDoc, // R: new
       83: saveDoc // S: save
@@ -204,7 +187,7 @@
   });
   document.addEventListener("drop", openDoc);
 
-  window.addEventListener("unload", storeData); // store appdata locally
   window.addEventListener("load", init); // initialize
+  window.addEventListener("unload", storeData); // store appdata locally
 
 }());

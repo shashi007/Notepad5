@@ -30,4 +30,4 @@ The user interface is very simple, thus there is no GUI toolbar or buttons, all 
 - JavaScript
 - [FileSaver.js](https://github.com/eligrey/FileSaver.js/) library
 
-**Made by [Uddhab Haldar](http://uddhab.me.pn/) ([@uddhabh](https://twitter.com/uddhabh))**
+**Made by [Uddhab Haldar](http://uddhab.me/) ([@uddhabh](https://twitter.com/uddhabh))**

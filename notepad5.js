@@ -1,7 +1,7 @@
 /*!
  * Notepad5 v1.06
  * https://github.com/uddhabh/Notepad5
- * By Uddhab Haldar (http://uddhab.me.pn/)
+ * By Uddhab Haldar (http://uddhab.me/)
  */
 
 (function() {

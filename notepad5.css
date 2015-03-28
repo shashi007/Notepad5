@@ -13,7 +13,7 @@ body,
   display: none;
 }
 #textarea {
-  font: 18px/1.7 'Droid Sans Mono', sans-serif;
+  font: 18px/1.7 "Droid Sans Mono", sans-serif;
   width: 100%;
   padding: 1% 15% 0;
   resize: none;
@@ -42,12 +42,13 @@ body,
     padding: 0 !important;
     color: #000 !important;
     background: transparent !important;
+    text-shadow: none !important;
   }
   #status-bar {
     display: none;
   }
 }
 @font-face {
-  font-family: 'Droid Sans Mono';
+  font-family: "Droid Sans Mono";
   src: url(DroidSansMono.woff);
 }

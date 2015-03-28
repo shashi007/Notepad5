@@ -111,10 +111,6 @@
 
   function init() {
     document.body.className = ""; // make the app visible
-    if (navigator.userAgent.match(/Mobi/)) { // likely mobile
-      document.body.innerHTML = "I think this webapp isn't useful on mobile... sorry :(";
-      return; // end
-    }
     if (!window.File) { // likely unsupported browser
       document.body.innerHTML = "<p>Sorry your browser isn't supported :(<br>Please upgrade to <a href='http://google.com/chrome'>Google Chrome</a>.</p>";
       return; // end
@@ -160,10 +156,10 @@
   textarea.addEventListener("keydown", function(event) {
     if (event.keyCode == 9) { // Tab: insert tab
       event.preventDefault();
-      var text = textarea.value,
-        sStart = textarea.selectionStart;
-      textarea.value = text.substring(0, sStart) + "\t" + text.substring(textarea.selectionEnd);
-      textarea.selectionEnd = sStart + 1;
+      var text = this.value,
+        sStart = this.selectionStart;
+      this.value = text.substring(0, sStart) + "\t" + text.substring(this.selectionEnd);
+      this.selectionEnd = sStart + 1;
     }
   });
 

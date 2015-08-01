@@ -1,5 +1,5 @@
 /*!
- * Notepad5 v1.06
+ * Notepad5 v1.07
  * https://github.com/uddhabh/Notepad5
  * By Uddhab Haldar (http://uddhab.me/)
  */
@@ -21,7 +21,8 @@
     filename;
 
   function skipSaving() { // warning for saving doc
-    if (!isModified || !textarea.value || confirm("You have unsaved changes that will be lost.")) {
+    if (!isModified || !textarea.value ||
+      confirm("You have unsaved changes that will be lost.")) {
       isModified = false;
       return true;
     }
@@ -65,7 +66,8 @@
       if (newFilename === "") {
         changeFilename(); // "untitled.txt"
       } else {
-        changeFilename(/\.txt$/i.test(newFilename) ? newFilename : newFilename + ".txt");
+        changeFilename(/\.txt$/i.test(newFilename) ? newFilename :
+          newFilename + ".txt");
       }
       var blob = new Blob([textarea.value.replace(/\n/g, "\r\n")], {
         type: "text/plain;charset=utf-8"
@@ -82,9 +84,12 @@
 
   function toggleFullScreen() {
     var elem = document.documentElement,
-      request = elem.requestFullscreen || elem.msRequestFullscreen || elem.mozRequestFullScreen || elem.webkitRequestFullscreen,
-      exit = document.exitFullscreen || document.msExitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen;
-    if (!document.fullscreenElement && !document.msFullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement) {
+      request = elem.requestFullscreen || elem.msRequestFullscreen ||
+      elem.mozRequestFullScreen || elem.webkitRequestFullscreen,
+      exit = document.exitFullscreen || document.msExitFullscreen ||
+      document.mozCancelFullScreen || document.webkitExitFullscreen;
+    if (!document.fullscreenElement && !document.msFullscreenElement &&
+      !document.mozFullScreenElement && !document.webkitFullscreenElement) {
       request.call(elem);
     } else {
       exit.call(document);
@@ -112,7 +117,8 @@
   function init() {
     document.body.className = ""; // make the app visible
     if (!window.File) { // likely unsupported browser
-      document.body.innerHTML = "<p>Sorry your browser isn't supported :(<br>Please upgrade to <a href='http://google.com/chrome'>Google Chrome</a>.</p>";
+      document.body.innerHTML =
+        "<h2>Sorry your browser isn't supported :(</h2>";
       return; // end
     }
     var appdata = JSON.parse(localStorage.getItem("appdata"));
@@ -128,7 +134,9 @@
         newDoc(); // blank note
       }
     } else { // first run
-      newDoc(["Welcome to " + appname + ", the online-offline notepad. All of your text is stored offline on your computer. Nothing is stored on servers.",
+      newDoc(["Welcome to " + appname + ", the online-offline notepad." +
+        " All of your text is stored offline on your computer." +
+        " Nothing is stored on servers.",
         "\nHere are some useful keyboard shortcuts:",
         "Ctrl + R : Create New Document",
         "Ctrl + O : Open Document",
@@ -158,7 +166,8 @@
       event.preventDefault();
       var text = this.value,
         sStart = this.selectionStart;
-      this.value = text.substring(0, sStart) + "\t" + text.substring(this.selectionEnd);
+      this.value = text.substring(0, sStart) + "\t" +
+        text.substring(this.selectionEnd);
       this.selectionEnd = sStart + 1;
     }
   });

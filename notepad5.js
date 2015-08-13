@@ -172,7 +172,7 @@
     }
   });
 
-  document.addEventListener("keydown", function(event) {
+  document.addEventListener("keydown", function(event) { // keyboard shortcuts
     var keys = {
       13: toggleFullScreen, // Enter: toggle fullscreen
       66: function() { // B: toggle statusBar

@@ -23,11 +23,4 @@ The user interface is very simple, thus there is no GUI toolbar or buttons, all 
 - Ctrl + E : Add Custom CSS
 - Ctrl + Enter : Toggle Full Screen
 
-### Technology used to make this:
-
-- HTML5
-- CSS3
-- JavaScript
-- [FileSaver.js](https://github.com/eligrey/FileSaver.js/) library
-
-**Made by [Uddhab Haldar](http://uddhab.me/) ([@uddhabh](https://twitter.com/uddhabh))**
+**Made by [Uddhab Haldar](http://uddhab.me/)**

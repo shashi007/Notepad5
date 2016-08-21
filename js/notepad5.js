@@ -1,21 +1,16 @@
 /*!
- * Notepad5 v1.07
+ * Notepad5 v1.5
  * https://github.com/uddhabh/Notepad5
  * By Uddhab Haldar (http://uddhab.me/)
  */
 
-(function() {
-  "use strict";
-
-  function $(id) { // shortcut for document.getElementById
-    return document.getElementById(id);
-  }
+$(function() {
 
   // core variables
-  var customStyle = $("custom-style"),
-    textarea = $("textarea"),
-    statusBar = $("status-bar"),
-    fileInput = $("file-input"),
+  var customStyle = $("#custom-style"),
+    textarea = $("#textarea"),
+    statusBar = $("#status-bar"),
+    fileInput = $("#file-input"),
     appname = "Notepad5",
     isModified,
     filename;
@@ -34,12 +29,15 @@
   }
 
   function updateStatusBar() { // text stats
-    var text = textarea.value;
-    statusBar.value = "Words: " + (text.split(/\w+/).length - 1) +
-      "  Characters: " + text.replace(/\s/g, "").length + " / " + text.length;
+    var text = textarea.val();
+    statusBar.val(
+      "Words: " + (text.split(/\w+/).length - 1) +
+      "  Characters: " + text.replace(/\s/g, "").length + " / " + text.length
+    );
   }
 
   function newDoc(text, newFilename) {
+    console.log("test");
     if (skipSaving()) {
       textarea.value = text || "";
       changeFilename(newFilename); // default "untitled.txt"
@@ -47,14 +45,14 @@
     }
   }
 
-  function openDoc(event) {
-    var files = event.target.files || event.dataTransfer.files,
+  function openDoc(e) {
+    var files = e.target.files || e.dataTransfer.files,
       file = files[0],
       reader = new FileReader();
     if (file) {
-      event.preventDefault();
-      reader.addEventListener("load", function(event) {
-        newDoc(event.target.result, file.name);
+      e.preventDefault();
+      reader.on("load", function(e) {
+        newDoc(e.target.result, file.name);
       });
       reader.readAsText(file);
     }
@@ -69,7 +67,7 @@
         changeFilename(/\.txt$/i.test(newFilename) ? newFilename :
           newFilename + ".txt");
       }
-      var blob = new Blob([textarea.value.replace(/\n/g, "\r\n")], {
+      var blob = new Blob([textarea.val().replace(/\n/g, "\r\n")], {
         type: "text/plain;charset=utf-8"
       }); // line ending CRLF
       saveAs(blob, filename);
@@ -115,7 +113,7 @@
   }
 
   function init() {
-    document.body.className = ""; // make the app visible
+    $("body").removeClass("loading"); // make the app visible
     if (!window.File) { // likely unsupported browser
       document.body.innerHTML =
         "<h2>Sorry your browser isn't supported :(</h2>";
@@ -150,20 +148,20 @@
     }
   }
 
-  fileInput.addEventListener("change", openDoc);
+  fileInput.on("change", openDoc);
 
-  textarea.addEventListener("blur", function() { // keep textarea focused
+  textarea.on("blur", function() { // keep textarea focused
     setTimeout(function() {
       textarea.focus();
     }, 0);
   });
-  textarea.addEventListener("input", function() {
+  textarea.on("input", function() {
     isModified = true;
     updateStatusBar();
   });
-  textarea.addEventListener("keydown", function(event) {
-    if (event.keyCode == 9) { // Tab: insert tab
-      event.preventDefault();
+  textarea.on("keydown", function(e) {
+    if (e.keyCode == 9) { // Tab: insert tab
+      e.preventDefault();
       var text = this.value,
         sStart = this.selectionStart;
       this.value = text.substring(0, sStart) + "\t" +
@@ -172,27 +170,31 @@
     }
   });
 
-  document.addEventListener("keydown", function(event) { // keyboard shortcuts
-    var keys = {
-      13: toggleFullScreen, // Enter: toggle fullscreen
-      66: function() { // B: toggle statusBar
-        showHideStatusBar(statusBar.hidden);
-      },
-      69: addCSS, // E: add custom CSS
-      79: function() { // O: open
-        if (skipSaving()) fileInput.click();
-      },
-      82: newDoc, // R: new
-      83: saveDoc // S: save
-    };
-    if (event.ctrlKey && keys[event.keyCode]) { // Ctrl + keys{}
-      event.preventDefault();
-      keys[event.keyCode]();
-    }
-  });
-  document.addEventListener("drop", openDoc);
+  Mousetrap.bind('mod+s', function(e) {
+    e.preventDefault();
+    saveDoc();
+  })
+  Mousetrap.bind('mod+n', function(e) {
+    e.preventDefault();
+    newDoc();
+  })
+  Mousetrap.bind('mod+b', function(e) {
+    e.preventDefault();
+    showHideStatusBar(statusBar.hidden);
+  })
+  Mousetrap.bind('mod+e', function(e) {
+    e.preventDefault();
+    addCSS();
+  })
+  Mousetrap.bind('mod+o', function(e) {
+    e.preventDefault();
+    if (skipSaving()) fileInput.click();
+  })
 
-  window.addEventListener("load", init); // initialize
-  window.addEventListener("unload", storeData); // store appdata locally
 
-}());
+  $(document).on("drop", openDoc);
+
+  $(window).on("load", init); // initialize
+  $(window).on("unload", storeData); // store appdata locally
+
+});

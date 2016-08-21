@@ -13,7 +13,7 @@ body,
   display: none;
 }
 #textarea {
-  font: 18px/1.7 "Droid Sans Mono", sans-serif;
+  font: 18px/1.7 "Lucida Console", Monaco, monospace;
   width: 100%;
   padding: 1% 15% 0;
   resize: none;
